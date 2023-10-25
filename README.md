@@ -5,6 +5,7 @@ Tutorial for creating a custom Kubernetes scheduler. The scheduler is written in
 ## Prerequisites
 * Kubeadm and Docker installed
 * Kubernetes cluster with 1+ node running
+* Kubernetes metrics-server installed and running
 ## Commands
 ```
 kubectl apply -f rbac.yaml
