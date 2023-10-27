@@ -6,6 +6,7 @@ from time import localtime, strftime
 from kubernetes import client, config, watch
 
 timestamp_format = "%Y-%m-%d %H:%M:%S"
+scheduler_name = "custom-scheduler"
 
 # Use load_incluster_config when deploying scheduler from within the cluster. Otherwise use load_kube_config
 config.load_incluster_config()
@@ -43,16 +44,16 @@ def main():
     for event in w.stream(v1.list_namespaced_pod, "default"):
         # We get an "event" whenever a pod needs to be scheduled
         # and event['object'].spec.scheduler_name == scheduler_name:
-        if event['object'].status.phase == "Pending":
+        if event['object'].status.phase == "Pending" and event['object'].spec.scheduler_name == scheduler_name:
             try:
                 pod_name = event['object'].metadata.name
                 nodes_list = list(set(nodes_available()))
                 random_node = random.choice(nodes_list)
                 res = scheduler(pod_name, random_node)
-                print("Custom-Scheduler: {}: Scheduling result: {}".format(get_timestamp(), res))
+                print("Custom-Scheduler: {}: Scheduling result: {}".format(get_timestamp(), res.status))
                 print("Custom-Scheduler: {}: Scheduled {} to {}".format(get_timestamp(), pod_name, random_node))
             except client.rest.ApiException as e:
-                print("Custom-Scheduler: {}: An exception occurred: ".format(get_timestamp(), json.loads(e.body)['message']))
+                print("Custom-Scheduler: {}: An exception occurred: {}".format(get_timestamp(), json.loads(e.body)['message']))
 
 
 if __name__ == '__main__':
