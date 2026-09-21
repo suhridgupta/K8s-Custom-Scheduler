@@ -1,5 +1,5 @@
 # K8s-Custom-Scheduler
-Tutorial for creating a custom Kubernetes scheduler. The scheduler is written in Python and schedules pods to a random node.
+Script for creating a custom Kubernetes scheduler. The scheduler is written in Python and schedules pods to a random node.
 
 # Set up custom scheduler
 ## Prerequisites
